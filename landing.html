@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Handling Money With Discipline</title>
+<style>
+:root{
+  --bg:#faf8f2; --bg2:#f1ede1; --card:#ffffff; --ink:#15130f; --muted:#5d584c; --line:#ded6c2;
+  --gold:#8a6d2b; --gold-b:#b8964b; --btn-bg:#0b0b0b; --btn-ink:#f3e6c0; --focus:#8a6d2b;
+  --cover-bg:#0b0b0b; --shadow:0 24px 60px -24px rgba(40,30,10,.45);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b0b0b; --bg2:#141310; --card:#171612; --ink:#f4efe2; --muted:#b4ad9a; --line:#2e2a20;
+    --gold:#c9a95c; --gold-b:#c9a95c; --btn-bg:#c9a95c; --btn-ink:#0b0b0b; --focus:#e3c985;
+    --shadow:0 24px 60px -24px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b0b0b; --bg2:#141310; --card:#171612; --ink:#f4efe2; --muted:#b4ad9a; --line:#2e2a20;
+  --gold:#c9a95c; --gold-b:#c9a95c; --btn-bg:#c9a95c; --btn-ink:#0b0b0b; --focus:#e3c985;
+  --shadow:0 24px 60px -24px rgba(0,0,0,.8);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.serif{font-family:Georgia,"Times New Roman",Times,serif;line-height:1.12;letter-spacing:-.01em;margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:-999px;top:8px;background:var(--btn-bg);color:var(--btn-ink);padding:10px 14px;border-radius:8px;z-index:50}
+.skip:focus{left:8px}
+.eyebrow{font:700 12px/1 system-ui,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--btn-bg);color:var(--btn-ink);border:0;border-radius:999px;padding:16px 30px;font:700 16px/1 system-ui,sans-serif;cursor:pointer;text-decoration:none;min-height:52px;transition:transform .15s ease,box-shadow .15s ease;box-shadow:0 10px 26px -12px rgba(0,0,0,.6)}
+.btn:hover{transform:translateY(-2px)}
+.btn.sm{padding:11px 20px;min-height:44px;font-size:14px}
+header.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:64px}
+.brand{font:700 13px/1.2 system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
+.tools{display:flex;align-items:center;gap:10px}
+.theme{background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:999px;width:44px;height:44px;cursor:pointer;font-size:18px}
+/* hero */
+.hero{padding:64px 0 72px;background:radial-gradient(900px 420px at 85% -10%,color-mix(in srgb,var(--gold-b) 22%,transparent),transparent 70%)}
+.hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center}
+.hero h1{font-size:clamp(38px,6vw,68px);margin:16px 0 18px}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.lede{font-size:clamp(18px,2.2vw,21px);color:var(--muted);max-width:34em;margin:0 0 26px}
+.buyrow{display:flex;flex-wrap:wrap;align-items:center;gap:18px}
+.price{font:700 28px/1 Georgia,serif}
+.fine{font-size:14px;color:var(--muted);margin:14px 0 0}
+.rating{font-size:14px;color:var(--muted);margin-top:6px}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 0;padding:0;list-style:none}
+.pills li{border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:14px;color:var(--muted);background:var(--card)}
+/* css cover */
+.cover-wrap{display:flex;justify-content:center;perspective:1200px}
+.cover{width:min(320px,80vw);aspect-ratio:210/297;background:var(--cover-bg);border:1px solid #3a3220;border-radius:6px;box-shadow:var(--shadow);position:relative;overflow:hidden;transform:rotateY(-8deg) rotateX(2deg);transition:transform .5s ease;color:#fff;text-align:center}
+.cover:hover{transform:rotateY(0) rotateX(0)}
+.cover::before{content:"";position:absolute;inset:12px;border:1px solid #b8964b}
+.cover::after{content:"";position:absolute;inset:18px;border:1px solid rgba(184,150,75,.35)}
+.cover .rings{position:absolute;left:50%;top:46%;width:150%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(184,150,75,.22);box-shadow:0 0 0 26px transparent,inset 0 0 0 26px transparent}
+.cover .in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:34px 24px;gap:2px}
+.cover small{font:700 8px/1.4 system-ui,sans-serif;letter-spacing:.3em;color:#b8964b;margin-bottom:22px}
+.cover b{display:block;font:700 clamp(30px,5vw,40px)/1.02 Georgia,serif;letter-spacing:.02em}
+.cover i{font:700 10px/1 system-ui,sans-serif;letter-spacing:.5em;color:#b8964b;font-style:normal;margin:8px 0}
+.cover .gold{color:#b8964b}
+.cover hr{width:38px;border:0;border-top:2px solid #b8964b;margin:18px 0 12px}
+.cover p{margin:0;font:italic 11px/1.5 Georgia,serif;color:#e8e3d5;max-width:200px}
+/* sections */
+section{padding:76px 0}
+section.alt{background:var(--bg2)}
+.head{max-width:700px;margin:0 0 38px}
+.head h2{font-size:clamp(30px,4.2vw,44px);margin:12px 0 12px}
+.head p{color:var(--muted);margin:0}
+.grid{display:grid;gap:16px}
+.g3{grid-template-columns:repeat(3,1fr)} .g2{grid-template-columns:repeat(2,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+.card h3{font-size:20px;margin-bottom:8px}
+.card p{margin:0;color:var(--muted);font-size:16px}
+.pain{border-left:3px solid var(--gold-b);border-radius:6px 16px 16px 6px}
+.outs{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(2,1fr);gap:12px 28px}
+.outs li{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}
+.tick{flex:none;width:22px;height:22px;border-radius:50%;background:var(--gold-b);color:#0b0b0b;display:grid;place-items:center;font-size:13px;font-weight:700;margin-top:2px}
+.chap{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--card);font-size:15.5px}
+.chap span{font:700 12px/1.6 system-ui,sans-serif;color:var(--gold);min-width:26px}
+.tools-box .card{border-style:dashed}
+/* sample table */
+.sample{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}
+.sample .bar{background:#0b0b0b;color:#fff;padding:18px 22px;border-bottom:3px solid #b8964b}
+.sample .bar b{font:700 20px Georgia,serif;display:block}
+.sample .bar span{font:italic 13px Georgia,serif;color:#cfc8b5}
+.sample .body{padding:20px 22px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+caption{text-align:left;color:var(--muted);padding-bottom:10px;font-size:14px}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left}
+th{background:#0b0b0b;color:#fff;font-size:13px}
+td:last-child,th:last-child{text-align:right}
+tr.tot td{font-weight:700;border-top:2px solid var(--gold-b)}
+/* faq */
+details{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:0 20px;margin-bottom:12px}
+summary{cursor:pointer;font-weight:700;padding:18px 0;list-style:none;display:flex;justify-content:space-between;gap:14px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--gold);font-size:22px;line-height:1}
+details[open] summary::after{content:"–"}
+details p{margin:0 0 18px;color:var(--muted)}
+/* final */
+.final{background:#0b0b0b;color:#f4efe2;text-align:center}
+.final h2{font-size:clamp(32px,5vw,52px);margin:14px 0 14px}
+.final p{color:#cfc8b5;max-width:34em;margin:0 auto 26px}
+.final .eyebrow{color:#c9a95c}
+.final .btn{background:#c9a95c;color:#0b0b0b}
+.final .price{color:#fff;margin-bottom:18px}
+footer{padding:30px 0;font-size:13px;color:var(--muted);text-align:center}
+footer p{max-width:46em;margin:0 auto}
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+.nojs .reveal{opacity:1;transform:none}
+@media (max-width:900px){
+  .hero .wrap{grid-template-columns:1fr;gap:34px}
+  .cover-wrap{order:-1}
+  .g3,.g4{grid-template-columns:repeat(2,1fr)}
+  .outs{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  section{padding:54px 0}.hero{padding:36px 0 48px}
+  .g3,.g2,.g4{grid-template-columns:1fr}
+  .brand{display:none}
+  .btn{width:100%}
+  .buyrow{flex-direction:column;align-items:stretch;text-align:center}
+}
+html[data-gumroad-launched] form[data-gumroad-waitlist]{display:none}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="top">
+  <div class="wrap">
+    <span class="brand" data-gumroad-field="name">Handling Money With Discipline</span>
+    <div class="tools">
+      <button class="theme" id="theme" type="button" aria-label="Switch between light and dark mode">◐</button>
+      <a class="btn sm" data-gumroad-action="buy" href="#buy">Get the guide</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<!-- HERO -->
+<section class="hero" aria-labelledby="h1">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">A practical money guide for ages 18 to 25</span>
+      <h1 id="h1">Your money is not the problem. <em>Having no system</em> is.</h1>
+      <p class="lede">Handling Money With Discipline is a 25-page guide that shows you where your money goes, how to build a budget that fits your real life, and how to start saving, even on a small allowance, part-time pay or a first salary.</p>
+      <div class="buyrow" id="buy">
+        <a class="btn" data-gumroad-action="buy" href="#buy">Get instant access</a>
+        <span class="price" data-gumroad-field="price" aria-label="Price">See price</span>
+      </div>
+      <div class="rating" aria-live="polite"><span data-gumroad-field="rating">Be the first to review</span> <span data-gumroad-field="review-count"></span></div>
+      <p class="fine">Digital PDF download · Written for beginners · No judgement, no jargon</p>
+      <ul class="pills" aria-label="Key features">
+        <li>25 A4 pages</li><li>3 printable worksheets</li><li>30-day challenge</li><li>Worked, accurate examples</li>
+      </ul>
+    </div>
+    <div class="cover-wrap" aria-hidden="true">
+      <div class="cover">
+        <div class="rings"></div>
+        <div class="in">
+          <small>A PRACTICAL MONEY GUIDE</small>
+          <b>HANDLING</b><b>MONEY</b>
+          <i>WITH</i>
+          <b class="gold">DISCIPLINE</b>
+          <hr>
+          <p>A practical guide to taking control of your money, building better financial habits and creating a more secure future.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAIN -->
+<section class="alt" aria-labelledby="pain">
+  <div class="wrap">
+    <div class="head reveal"><span class="eyebrow">Sound familiar?</span><h2 id="pain">You get paid. A week later it is gone.</h2><p>If any of this feels like you, this guide was written for you, not to make you feel bad, but to give you a plan.</p></div>
+    <div class="grid g3">
+      <div class="card pain reveal"><h3>“Where did it all go?”</h3><p>Money disappears in small amounts that never feel important, until the month is over.</p></div>
+      <div class="card pain reveal"><h3>Impulse buys, then regret</h3><p>You see it, you want it, you buy it, and a day later you wish you had waited.</p></div>
+      <div class="card pain reveal"><h3>Saving never sticks</h3><p>You mean to save what is left. There is rarely anything left.</p></div>
+      <div class="card pain reveal"><h3>Budgets feel confusing</h3><p>Most advice assumes a big salary. You have an allowance, part-time pay or a first job.</p></div>
+      <div class="card pain reveal"><h3>No safety net</h3><p>One surprise cost and you are borrowing or asking for help.</p></div>
+      <div class="card pain reveal"><h3>The future feels huge</h3><p>You want independence but do not know where to start, so it is easy to avoid thinking about it.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- OUTCOMES -->
+<section aria-labelledby="out">
+  <div class="wrap">
+    <div class="head reveal"><span class="eyebrow">What you will be able to do</span><h2 id="out">Finish with an actual plan, not just ideas.</h2><p>Every chapter ends with something you can do the same day.</p></div>
+    <ul class="outs">
+      <li class="reveal"><span class="tick" aria-hidden="true">✓</span><span>Take control of your spending habits</span></li>
+      <li class="reveal"><span class="tick" aria-hidden="true">✓</span><span>Build a realistic personal budget</span></li>
+      <li class="reveal"><span class="tick" aria-hidden="true">✓</span><span>Tell needs from wants without guilt</span></li>
+      <li class="reveal"><span class="tick" aria-hidden="true">✓</span><span>Develop a consistent saving habit</span></li>
+      <li class="reveal"><span class="tick" aria-hidden="true">✓</span><span>Avoid unnecessary purchases and impulse spending</span></li>
+      <li class="reveal"><span class="tick" aria-hidden="true">✓</span><span>Set goals with a monthly figure and a date</span></li>
+      <li class="reveal"><span class="tick" aria-hidden="true">✓</span><span>Build an emergency fund, step by step</span></li>
+      <li class="reveal"><span class="tick" aria-hidden="true">✓</span><span>Make calmer, better financial decisions</span></li>
+      <li class="reveal"><span class="tick" aria-hidden="true">✓</span><span>Build a healthier relationship with money</span></li>
+      <li class="reveal"><span class="tick" aria-hidden="true">✓</span><span>Follow a practical 30-day money routine</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- INSIDE -->
+<section class="alt" aria-labelledby="inside">
+  <div class="wrap">
+    <div class="head reveal"><span class="eyebrow">Inside the guide</span><h2 id="inside">18 short chapters. 4 tools. One clear path.</h2><p>Each chapter fits on a single page, so you can read one a day and apply it straight away.</p></div>
+    <div class="grid g3">
+      <div class="chap reveal"><span>01</span>Your relationship with money</div>
+      <div class="chap reveal"><span>02</span>Why your money disappears so quickly</div>
+      <div class="chap reveal"><span>03</span>Needs vs wants</div>
+      <div class="chap reveal"><span>04</span>The importance of financial discipline</div>
+      <div class="chap reveal"><span>05</span>Discover where your money goes</div>
+      <div class="chap reveal"><span>06</span>Creating your first budget</div>
+      <div class="chap reveal"><span>07</span>Budgeting with limited income</div>
+      <div class="chap reveal"><span>08</span>The art of saving</div>
+      <div class="chap reveal"><span>09</span>Building your emergency fund</div>
+      <div class="chap reveal"><span>10</span>Controlling impulse spending</div>
+      <div class="chap reveal"><span>11</span>The 24-hour purchase rule</div>
+      <div class="chap reveal"><span>12</span>Managing debt responsibly</div>
+      <div class="chap reveal"><span>13</span>Financial goals that actually work</div>
+      <div class="chap reveal"><span>14</span>Managing your first salary</div>
+      <div class="chap reveal"><span>15</span>Digital spending and online shopping</div>
+      <div class="chap reveal"><span>16</span>Building better financial habits</div>
+      <div class="chap reveal"><span>17</span>Common financial mistakes to avoid</div>
+      <div class="chap reveal"><span>18</span>Creating your personal financial plan</div>
+    </div>
+    <div class="grid g4 tools-box" style="margin-top:16px">
+      <div class="card reveal"><h3>Budget template</h3><p>Planned vs actual, with totals and remaining balance.</p></div>
+      <div class="card reveal"><h3>Spending tracker</h3><p>A simple daily log you can print or copy.</p></div>
+      <div class="card reveal"><h3>Savings goal tracker</h3><p>Month-by-month progress toward any goal.</p></div>
+      <div class="card reveal"><h3>30-day challenge</h3><p>One manageable action for each day.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SAMPLE -->
+<section aria-labelledby="peek">
+  <div class="wrap grid g2" style="align-items:center;gap:44px">
+    <div class="reveal">
+      <span class="eyebrow">A peek inside</span>
+      <h2 id="peek" style="font-size:clamp(30px,4.2vw,44px);margin:12px 0 14px">Real examples with numbers that add up.</h2>
+      <p style="color:var(--muted)">Small daily costs feel harmless. Seen together, they are not. The guide shows you how to spot your own leaks, then gives you the tools to close them, with worked examples you can follow line by line.</p>
+      <p style="color:var(--muted)">All amounts in the examples are illustrations, not quotes or promises, and every idea works in any currency.</p>
+    </div>
+    <div class="sample reveal" role="group" aria-label="Sample page from chapter 2">
+      <div class="bar"><b>Why Your Money Disappears So Quickly</b><span>An example month of small leaks</span></div>
+      <div class="body">
+        <table>
+          <caption>Illustrative amounts</caption>
+          <thead><tr><th scope="col">Leak</th><th scope="col">Times</th><th scope="col">Total</th></tr></thead>
+          <tbody>
+            <tr><td>Daily snack ($40)</td><td>22 days</td><td>$880</td></tr>
+            <tr><td>Delivery fees ($30)</td><td>8 orders</td><td>$240</td></tr>
+            <tr><td>Forgotten subscription ($99)</td><td>1</td><td>$99</td></tr>
+            <tr><td>“On special” extras ($150)</td><td>3</td><td>$450</td></tr>
+            <tr><td>Extra data top-ups ($50)</td><td>4</td><td>$200</td></tr>
+            <tr class="tot"><td>Total leaked</td><td></td><td>$1,869</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FIT -->
+<section class="alt" aria-labelledby="fit">
+  <div class="wrap">
+    <div class="head reveal"><span class="eyebrow">Is this for you?</span><h2 id="fit">Honest about who it helps.</h2></div>
+    <div class="grid g2">
+      <div class="card reveal"><h3>A good fit if you…</h3>
+        <p>are 18 to 25 and receive an allowance, part-time pay or a first salary; want a simple, judgement-free place to start; or would rather follow a short plan than read a long textbook.</p></div>
+      <div class="card reveal"><h3>Not what this is</h3>
+        <p>This is not a get-rich-quick system and does not recommend investments. It is general education, not personal financial advice. Your results depend on your circumstances and consistency.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section aria-labelledby="faq">
+  <div class="wrap" style="max-width:780px">
+    <div class="head reveal"><span class="eyebrow">Questions</span><h2 id="faq">Before you decide</h2></div>
+    <details class="reveal"><summary>What exactly do I get?</summary><p>A 25-page A4 PDF: a welcome, 18 practical chapters, three fill-in worksheets and a 30-day challenge, plus a closing message.</p></details>
+    <details class="reveal"><summary>Can I use it outside the United States?</summary><p>Yes. Examples use dollars, but the methods work in any currency. A few mentions of regulators are examples, so check the rules that apply where you live.</p></details>
+    <details class="reveal"><summary>Does it tell me what to invest in?</summary><p>No. It focuses on budgeting, saving, emergency funds, debt and habits. It warns against get-rich-quick schemes and does not promote any investment.</p></details>
+    <details class="reveal"><summary>Can I print the worksheets?</summary><p>Yes. The budget template, spending tracker and savings tracker are designed to be printed or copied into a notebook.</p></details>
+    <details class="reveal"><summary>Is this financial advice?</summary><p>No. It is general education. Rules, fees, interest rates and taxes differ by country and change over time, so speak to a registered adviser about your own situation.</p></details>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final" aria-labelledby="fin">
+  <div class="wrap">
+    <span class="eyebrow">Start small. Stay consistent.</span>
+    <h2 id="fin">Make your next payday different.</h2>
+    <p>Get the guide, fill in the first worksheet tonight, and start the 30-day challenge tomorrow.</p>
+    <div class="price" data-gumroad-field="price" aria-label="Price">See price</div>
+    <a class="btn" data-gumroad-action="buy" href="#buy">Get instant access</a>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap"><p>This product is for general education only and is not personalised financial, legal, tax or investment advice. Amounts in examples are illustrations, not recommendations.</p></div>
+</footer>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  try{var t=localStorage.getItem('hmwd-theme');if(t)root.setAttribute('data-theme',t);}catch(e){}
+  var b=document.getElementById('theme');
+  if(b)b.addEventListener('click',function(){
+    var dark=root.getAttribute('data-theme')?root.getAttribute('data-theme')==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var n=dark?'light':'dark';root.setAttribute('data-theme',n);
+    try{localStorage.setItem('hmwd-theme',n);}catch(e){}
+  });
+  var els=document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in')});return;}
+  var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}})},{threshold:.12});
+  els.forEach(function(e){io.observe(e)});
+})();
+</script>
+</body>
+</html>
